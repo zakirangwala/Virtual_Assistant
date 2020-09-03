@@ -1,14 +1,12 @@
 """
 Things to add :
+What's my internet speed
+Weather and Bus/Subway Times
+What,Where,How,Why : Google Search
 Spotify Music
-Read Inbox and Emails
-https://www.youtube.com/watch?v=6DD4IOHhNYo&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=9
-Maps API
-https://www.youtube.com/watch?v=ckPEY2KppHc&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=20
-Twitter API
-https://www.youtube.com/watch?v=dvAurfBB6Jk&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=21
-What,Where,How,Why
-Google Search
+Read Inbox and Emails : https://www.youtube.com/watch?v=6DD4IOHhNYo&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=9
+Maps API : https://www.youtube.com/watch?v=ckPEY2KppHc&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=20
+Twitter API : https://www.youtube.com/watch?v=dvAurfBB6Jk&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=21
 """
 
 # Import Libraries
