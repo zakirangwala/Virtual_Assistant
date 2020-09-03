@@ -19,6 +19,7 @@ import speedtest
 import wikipedia as w
 import requests
 import webbrowser
+from playsound import playsound
 from Spotify import SpotifyAPI
 
 # Initialize Text to Speech
@@ -60,7 +61,8 @@ def listen():
         audio = r.listen(source, timeout=1, phrase_time_limit=5)
     try:
         # print("Recognizing...")
-        speak("Recognizing...")
+        # speak("Recognizing...")
+        playsound('sound.mp3')
         query = r.recognize_google(audio, language='en-CA')
         #print("User said: {}".format(query))
     except Exception as e:
