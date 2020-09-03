@@ -1,6 +1,5 @@
 """
 Things to add :
-What's my internet speed
 Weather and Bus/Subway Times
 What,Where,How,Why : Google Search
 Spotify Music
@@ -120,10 +119,82 @@ def open_browser(url):
     chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
     webbrowser.get(chrome_path).open_new_tab(url)
 
+# Internet Speedtest
+
+
+def speed_check():
+    try:
+        print('Testing...')
+        speak('Testing...')
+        s = speedtest.Speedtest()
+        s.get_best_server()
+        s.download()
+        s.upload()
+        res = s.results.dict()
+        server = []
+        server.append(res["server"]["name"])
+        server.append(res["server"]["country"])
+        server.append(res["server"]["sponsor"])
+        client = []
+        client.append(res["client"]["ip"])
+        client.append(res["client"]["isp"])
+        speed = []
+        ONE_MB = 1000000
+        speed.append((round((res["download"]/ONE_MB), 2)))
+        speed.append((round((res["upload"]/ONE_MB), 2)))
+        speed.append((round((res["ping"]), 2)))
+        print(
+            f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
+        speak(
+            f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
+        print(
+            f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
+        speak(
+            f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
+        print(
+            f'Your download speed is {speed[0]} mbps while your upload speed is {speed[1]} mpbs and your ping is {speed[2]} ms ')
+        speak(
+            f'Your download speed is {speed[0]} megabytes per second while your upload speed is {speed[1]} megabytes per second and your ping is {speed[2]} milliseconds ')
+    except Exception as e:
+        print("Say that again please")
+        speak("Say that again please")
+
+# Get Location
+
+
+def get_location():
+    URL = 'https://iplocation.com/'
+    page = requests.get(URL, headers=headers)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    city = soup.find(class_='city').get_text()
+    country = soup.find(class_='country_name').get_text()
+    latitude = soup.find(class_='lat').get_text()
+    longitude = soup.find(class_='lng').get_text()
+    return city, country, latitude, longitude
+
+# Check Weather
+
+
+def weather(latitude,longitude):
+    try:
+        api_key = '30542e6bdd35e42a27293aea86597947'
+        base_url = 'http://api.openweathermap.org/data/2.5/weather?'
+        complete_url = base_url + "lat=" + str (latitude) + "&lon=" + str (longitude) + "&appid=" + api_key
+        response = requests.get(complete_url)
+        x = response.json()
+    except Exception as e:
+        print("Say that again please")
+        speak("Say that again please")
+    if x["cod"] != "404":
+        return x
+    else:
+        return False
+
 
 # Main Method
 if __name__ == "__main__":
     # greet()
+    city,country,latitude,longitude = get_location()
     while True:
         query = listen().lower()
         if 'stop' in query or 'thank you' in query:
@@ -162,7 +233,7 @@ if __name__ == "__main__":
                 URL = google_query(query)[0]
                 open_browser(URL)
         elif 'song' in query:
-            try :
+            try:
                 index = query.find('song') + 5
                 if index == 4:
                     print("Say that again please")
@@ -178,43 +249,29 @@ if __name__ == "__main__":
                         # print(data)
                         for i in range(len(data['tracks']['items'][0]['artists'])):
                             artists.append(data['tracks']['items']
-                                        [0]['artists'][i]['name'])
+                                           [0]['artists'][i]['name'])
                         if artists == 1:
-                            print(f'The artist who sang this song is {artists}')
-                            speak(f'The artist who sang this song is {artists}')
+                            print(
+                                f'The artist who sang this song is {artists}')
+                            speak(
+                                f'The artist who sang this song is {artists}')
                         else:
-                            print(f'The artists who sang this song are {artists}')
-                            speak(f'The artists who sang this song are {artists}')
-            except Exception as e:
-                    print("Say that again please")
-                    speak("Say that again please")
-        elif 'internet' in query and 'speed' in query:
-            try:
-                print('Testing...')
-                speak('Testing...')
-                s = speedtest.Speedtest()
-                s.get_best_server()
-                s.download()
-                s.upload()
-                res = s.results.dict()
-                server = []
-                server.append(res["server"]["name"])
-                server.append(res["server"]["country"])
-                server.append(res["server"]["sponsor"])
-                client = []
-                client.append(res["client"]["ip"])
-                client.append(res["client"]["isp"])
-                speed = []
-                ONE_MB = 1000000
-                speed.append((round((res["download"]/ONE_MB),2)))
-                speed.append((round((res["upload"]/ONE_MB),2)))
-                speed.append((round((res["ping"]),2)))
-                print(f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
-                speak(f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
-                print(f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
-                speak(f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
-                print(f'Your download speed is {speed[0]} mbps while your upload speed is {speed[1]} mpbs and your ping is {speed[2]} ms ')
-                speak(f'Your download speed is {speed[0]} megabytes per second while your upload speed is {speed[1]} megabytes per second and your ping is {speed[2]} milliseconds ')
+                            print(
+                                f'The artists who sang this song are {artists}')
+                            speak(
+                                f'The artists who sang this song are {artists}')
             except Exception as e:
                 print("Say that again please")
                 speak("Say that again please")
+        elif 'internet' in query and 'speed' in query:
+            speed_check()
+        elif 'weather' in query or 'temperature' in query:
+            x = weather(latitude,longitude)
+            if x == False:
+                print('Please try again')
+                speak('Please try again')
+            else:
+                print(x)
+                temp = (int)((x["main"]["temp"]) - 273.15)
+                print(f'The temperature is {temp}°C')
+                speak(f'The temperature is {temp} degrees celsius')
