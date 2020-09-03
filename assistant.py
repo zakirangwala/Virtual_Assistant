@@ -16,6 +16,7 @@ from json.decoder import JSONDecodeError
 import pyttsx3
 import datetime
 import speech_recognition as sr
+import speedtest
 import wikipedia as w
 import requests
 import webbrowser
@@ -128,6 +129,8 @@ if __name__ == "__main__":
         if 'stop' in query or 'thank you' in query:
             speak('Have a wonderful day!')
             break
+        elif 'hey' in query or 'hi' in query or 'hello' in query:
+            speak('Hey there!')
         elif 'wikipedia' in query:
             print('Searching...')
             speak('Searching...')
@@ -185,3 +188,33 @@ if __name__ == "__main__":
             except Exception as e:
                     print("Say that again please")
                     speak("Say that again please")
+        elif 'internet' in query and 'speed' in query:
+            try:
+                print('Testing...')
+                speak('Testing...')
+                s = speedtest.Speedtest()
+                s.get_best_server()
+                s.download()
+                s.upload()
+                res = s.results.dict()
+                server = []
+                server.append(res["server"]["name"])
+                server.append(res["server"]["country"])
+                server.append(res["server"]["sponsor"])
+                client = []
+                client.append(res["client"]["ip"])
+                client.append(res["client"]["isp"])
+                speed = []
+                ONE_MB = 1000000
+                speed.append((round((res["download"]/ONE_MB),2)))
+                speed.append((round((res["upload"]/ONE_MB),2)))
+                speed.append((round((res["ping"]),2)))
+                print(f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
+                speak(f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
+                print(f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
+                speak(f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
+                print(f'Your download speed is {speed[0]} mbps while your upload speed is {speed[1]} mpbs and your ping is {speed[2]} ms ')
+                speak(f'Your download speed is {speed[0]} megabytes per second while your upload speed is {speed[1]} megabytes per second and your ping is {speed[2]} milliseconds ')
+            except Exception as e:
+                print("Say that again please")
+                speak("Say that again please")
