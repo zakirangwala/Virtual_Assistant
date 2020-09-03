@@ -175,11 +175,12 @@ def get_location():
 # Check Weather
 
 
-def weather(latitude,longitude):
+def weather(latitude, longitude):
     try:
         api_key = '30542e6bdd35e42a27293aea86597947'
         base_url = 'http://api.openweathermap.org/data/2.5/weather?'
-        complete_url = base_url + "lat=" + str (latitude) + "&lon=" + str (longitude) + "&appid=" + api_key
+        complete_url = base_url + "lat=" + \
+            str(latitude) + "&lon=" + str(longitude) + "&appid=" + api_key
         response = requests.get(complete_url)
         x = response.json()
     except Exception as e:
@@ -194,7 +195,7 @@ def weather(latitude,longitude):
 # Main Method
 if __name__ == "__main__":
     # greet()
-    city,country,latitude,longitude = get_location()
+    city, country, latitude, longitude = get_location()
     while True:
         query = listen().lower()
         if 'stop' in query or 'thank you' in query:
@@ -266,12 +267,35 @@ if __name__ == "__main__":
         elif 'internet' in query and 'speed' in query:
             speed_check()
         elif 'weather' in query or 'temperature' in query:
-            x = weather(latitude,longitude)
+            x = weather(latitude, longitude)
             if x == False:
                 print('Please try again')
                 speak('Please try again')
             else:
-                print(x)
                 temp = (int)((x["main"]["temp"]) - 273.15)
-                print(f'The temperature is {temp}°C')
-                speak(f'The temperature is {temp} degrees celsius')
+                feel = (int)((x["main"]["feels_like"]) - 273.15)
+                min_ = (int)((x["main"]["temp_min"]) - 273.15)
+                max_ = (int)((x["main"]["temp_max"]) - 273.15)
+                sunrise = x["sys"]["sunrise"]
+                sunrise = datetime.datetime.fromtimestamp(
+                    sunrise).strftime('%H:%M')
+                sunset = x["sys"]["sunset"]
+                sunset = datetime.datetime.fromtimestamp(
+                    sunset).strftime('%H:%M')
+                description = x["weather"][0]["description"]
+                print(f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
+                speak(f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius')
+                now = int(datetime.datetime.now().hour)
+                temp = sunrise[0:2]
+                temp = int(temp)
+                delta = int (sunset[0:2])
+                if delta > 12:
+                    delta = delta - 12
+                now = 3
+                if now > temp :
+                    minutes = sunset.find(":")
+                    time = '' + str (delta) + ':' + sunset[minutes:]
+                    speak(f"The sun will fall at {time} today")
+                else:
+                    speak(f"The sun will rise at {sunrise} today")
+
