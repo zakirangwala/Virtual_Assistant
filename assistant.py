@@ -1,6 +1,6 @@
 """
 Things to add :
-Weather and Bus/Subway Times
+Bus/Subway Times
 What,Where,How,Why : Google Search
 Spotify Music
 Read Inbox and Emails : https://www.youtube.com/watch?v=6DD4IOHhNYo&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=9
@@ -54,15 +54,17 @@ def greet():
 def listen():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...")
+        # print("Listening...")
+        speak("I'm Listening")
         r.pause_threshold = 1
         audio = r.listen(source, timeout=1, phrase_time_limit=5)
     try:
-        print("Recognizing...")
+        # print("Recognizing...")
+        speak("Recognizing...")
         query = r.recognize_google(audio, language='en-CA')
-        print("User said: {}".format(query))
+        #print("User said: {}".format(query))
     except Exception as e:
-        print("Say that again please")
+        #print("Say that again please")
         speak("Say that again please")
         return "None"
     return query
@@ -124,7 +126,7 @@ def open_browser(url):
 
 def speed_check():
     try:
-        print('Testing...')
+        # print('Testing...')
         speak('Testing...')
         s = speedtest.Speedtest()
         s.get_best_server()
@@ -143,20 +145,13 @@ def speed_check():
         speed.append((round((res["download"]/ONE_MB), 2)))
         speed.append((round((res["upload"]/ONE_MB), 2)))
         speed.append((round((res["ping"]), 2)))
-        print(
-            f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
+        #print(f'IP address : {client[0]}\nService Provider : {client[1]}')
+       # print(f'Connected to {server[2]} server\nLocation : {server[0]}, {server[1]}')
+        #print(f'Download speed  : {speed[0]} mpbs\nUpload speed : {speed[1]} mpbs\nPing : {speed[2]} ms ')
         speak(
-            f'Your IP address is {client[0]} and your Service Provider is {client[1]}')
-        print(
-            f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
-        speak(
-            f'You are connected to the {server[2]} located in {server[0]}, {server[1]}')
-        print(
-            f'Your download speed is {speed[0]} mbps while your upload speed is {speed[1]} mpbs and your ping is {speed[2]} ms ')
-        speak(
-            f'Your download speed is {speed[0]} megabytes per second while your upload speed is {speed[1]} megabytes per second and your ping is {speed[2]} milliseconds ')
+            f'Download speed is {speed[0]} megabytes per second  upload speed is {speed[1]} megabytes per second, ping is {speed[2]} milliseconds ')
     except Exception as e:
-        print("Say that again please")
+        #print("Say that again please")
         speak("Say that again please")
 
 # Get Location
@@ -184,7 +179,7 @@ def weather(latitude, longitude):
         response = requests.get(complete_url)
         x = response.json()
     except Exception as e:
-        print("Say that again please")
+        #print("Say that again please")
         speak("Say that again please")
     if x["cod"] != "404":
         return x
@@ -204,24 +199,24 @@ if __name__ == "__main__":
         elif 'hey' in query or 'hi' in query or 'hello' in query:
             speak('Hey there!')
         elif 'wikipedia' in query:
-            print('Searching...')
+            #print('Searching...')
             speak('Searching...')
             query = query.replace('wikipedia', '')
             results = w.summary(query, sentences=1)
             speak("According to Wikipedia")
-            print("According to Wikipedia : {} ".format(results))
+           # print("According to Wikipedia : {} ".format(results))
             speak(results)
         elif 'stock' in query:
             query += query + " Yahoo Finance"
-            print('Searching...')
+           # print('Searching...')
             speak('Searching...')
             URL = google_query(query)[0]
             if check_price() == False:
-                print("Say that again please")
+                #print("Say that again please")
                 speak("Say that again please")
             else:
                 currency, title, price = check_price()
-                print("The price of {} is {} {}".format(title, price, currency))
+               # print("The price of {} is {} {}".format(title, price, currency))
                 speak("The price of {} is {} {}".format(title, price, currency))
         elif 'open' in query:
             if 'google' in query:
@@ -237,14 +232,14 @@ if __name__ == "__main__":
             try:
                 index = query.find('song') + 5
                 if index == 4:
-                    print("Say that again please")
+                    #print("Say that again please")
                     speak("Say that again please")
                 else:
                     song = query[index:]
                     data = song_credits(song)
                     artists = []
                     if data['tracks']['total'] == 0:
-                        print("Say that again please")
+                       # print("Say that again please")
                         speak("Say that again please")
                     else:
                         # print(data)
@@ -252,24 +247,22 @@ if __name__ == "__main__":
                             artists.append(data['tracks']['items']
                                            [0]['artists'][i]['name'])
                         if artists == 1:
-                            print(
-                                f'The artist who sang this song is {artists}')
+                           # print(  f'The artist who sang this song is {artists}')
                             speak(
                                 f'The artist who sang this song is {artists}')
                         else:
-                            print(
-                                f'The artists who sang this song are {artists}')
+                            #print(f'The artists who sang this song are {artists}')
                             speak(
                                 f'The artists who sang this song are {artists}')
             except Exception as e:
-                print("Say that again please")
+                #print("Say that again please")
                 speak("Say that again please")
-        elif 'internet' in query and 'speed' in query:
+        elif ('internet' in query and 'speed' in query) or 'speed test' in query:
             speed_check()
         elif 'weather' in query or 'temperature' in query:
             x = weather(latitude, longitude)
             if x == False:
-                print('Please try again')
+                #print('Please try again')
                 speak('Please try again')
             else:
                 temp = (int)((x["main"]["temp"]) - 273.15)
@@ -283,19 +276,18 @@ if __name__ == "__main__":
                 sunset = datetime.datetime.fromtimestamp(
                     sunset).strftime('%H:%M')
                 description = x["weather"][0]["description"]
-                print(f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
-                speak(f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius')
+                #print( f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
+                speak(
+                    f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius. The predicted forecast is {description}')
                 now = int(datetime.datetime.now().hour)
                 temp = sunrise[0:2]
                 temp = int(temp)
-                delta = int (sunset[0:2])
-                if delta > 12:
-                    delta = delta - 12
-                now = 3
-                if now > temp :
+                delta_og = int(sunset[0:2])
+                if delta_og > 12:
+                    delta = delta_og - 12
+                if now > temp and now < delta_og:
                     minutes = sunset.find(":")
-                    time = '' + str (delta) + ':' + sunset[minutes:]
+                    time = '' + str(delta) + ':' + sunset[minutes:]
                     speak(f"The sun will fall at {time} today")
-                else:
+                elif now < temp:
                     speak(f"The sun will rise at {sunrise} today")
-
