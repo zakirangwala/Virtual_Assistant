@@ -293,5 +293,5 @@ if __name__ == "__main__":
                     speak(f"The sun will fall at {time} today")
                 elif now < temp:
                     speak(f"The sun will rise at {sunrise} today")
-        elif 'ginan' in query:
+        elif 'help me practice' in query:
             playsound('ginan.mp3')
