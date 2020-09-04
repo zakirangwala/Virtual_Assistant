@@ -21,6 +21,7 @@ import requests
 import webbrowser
 from playsound import playsound
 from Spotify import SpotifyAPI
+import config
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -107,8 +108,8 @@ URL = ''
 
 def song_credits(song):
     try:
-        client_id = 'de870cc0e21c4975b52ba7b4e83e8dd2'
-        client_secret = '1fbfbc7336984877840c8a0db020de38'
+        client_id = config.client_id
+        client_secret = config.client_secret
         spotify = SpotifyAPI(client_id, client_secret)
         spotify.get_access_token()
         data = spotify.search(song, search_type="track")
@@ -174,7 +175,7 @@ def get_location():
 
 def weather(latitude, longitude):
     try:
-        api_key = '30542e6bdd35e42a27293aea86597947'
+        api_key = config.api_key
         base_url = 'http://api.openweathermap.org/data/2.5/weather?'
         complete_url = base_url + "lat=" + \
             str(latitude) + "&lon=" + str(longitude) + "&appid=" + api_key
