@@ -20,7 +20,7 @@ import wikipedia as w
 import requests
 import webbrowser
 from playsound import playsound
-from Spotify import SpotifyAPI
+from spotify import SpotifyAPI
 import config
 
 # Initialize Text to Speech
