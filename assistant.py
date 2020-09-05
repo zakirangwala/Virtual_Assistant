@@ -43,12 +43,17 @@ def greet():
     hour = int(datetime.datetime.now().hour)
     if hour >= 0 and hour <= 12:
         speak("Good Morning!")
+        print("Good Morning!")
     elif hour > 12 and hour < 16:
         speak("Good Afternoon!")
+        print("Good Afternoon!")
     elif hour > 16 and hour < 20:
         speak("Good Evening!")
+        print("Good Evening!")
     else:
         speak("Good Night!")
+        print("Good Night!")
+    print("Hi, I am your virtual assistant. Please tell me how to help you")
     speak("Hi, I am your virtual assistant. Please tell me how to help you")
 
 # Listen to user input
@@ -59,12 +64,12 @@ def listen():
     with sr.Microphone() as source:
         print("Listening...")
         #speak("I'm Listening")
-        # playsound('sound.mp3')
         r.pause_threshold = 1
         audio = r.listen(source, timeout=1, phrase_time_limit=5)
     try:
         print("Recognizing...")
-        speak("Recognizing...")
+        speak('Recognizing')
+        # playsound(sound.mp3)
         query = r.recognize_google(audio, language='en-CA')
         print("User said: {}".format(query))
     except Exception as e:
@@ -199,10 +204,12 @@ if __name__ == "__main__":
     while True:
         query = listen().lower()
         if 'stop' in query or 'thank you' in query:
+            print('Have a wonderful day!')
             speak('Have a wonderful day!')
             break
-        elif 'hey' in query or 'hi' in query or 'hello' in query:
-            speak('Hey there!')
+        elif "what's my name" in query:
+            print('Zaki')
+            speak('Zaki')
         elif 'wikipedia' in query:
             print('Searching...')
             speak('Searching...')
@@ -224,6 +231,8 @@ if __name__ == "__main__":
                 print("The price of {} is {} {}".format(title, price, currency))
                 speak("The price of {} is {} {}".format(title, price, currency))
         elif 'open' in query:
+            print('Opening..')
+            speak('Opening')
             if 'google' in query:
                 open_browser('google.ca')
             elif 'my website' in query:
@@ -247,7 +256,7 @@ if __name__ == "__main__":
                         print("Say that again please")
                         speak("Say that again please")
                     else:
-                        print(data)
+                        #print(data)
                         for i in range(len(data['tracks']['items'][0]['artists'])):
                             artists.append(data['tracks']['items']
                                            [0]['artists'][i]['name'])
@@ -292,6 +301,11 @@ if __name__ == "__main__":
                 if now > temp and now < delta_og:
                     minutes = sunset.find(":")
                     time = '' + str(delta) + ':' + sunset[minutes:]
+                    print(f"The sun will fall at {time} today")
                     speak(f"The sun will fall at {time} today")
                 elif now < temp:
+                    print(f"The sun will rise at {sunrise} today")
                     speak(f"The sun will rise at {sunrise} today")
+                elif 'hey' in query or 'hi' in query or 'hello' in query:
+                    print('Hey there')
+                    speak('Hey there!')
