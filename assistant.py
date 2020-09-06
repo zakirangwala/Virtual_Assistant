@@ -155,8 +155,10 @@ def speed_check():
         speed.append((round((res["upload"]/ONE_MB), 2)))
         speed.append((round((res["ping"]), 2)))
         print(f'IP address : {client[0]}\nService Provider : {client[1]}')
-        print(f'Connected to {server[2]} server\nLocation : {server[0]}, {server[1]}')
-        print(f'Download speed  : {speed[0]} mpbs\nUpload speed : {speed[1]} mpbs\nPing : {speed[2]} ms ')
+        print(
+            f'Connected to {server[2]} server\nLocation : {server[0]}, {server[1]}')
+        print(
+            f'Download speed  : {speed[0]} mpbs\nUpload speed : {speed[1]} mpbs\nPing : {speed[2]} ms ')
         speak(
             f'Download speed is {speed[0]} megabytes per second  upload speed is {speed[1]} megabytes per second, ping is {speed[2]} milliseconds ')
     except Exception as e:
@@ -202,7 +204,8 @@ if __name__ == "__main__":
     city, country, latitude, longitude = get_location()
     print(f"{city}, {country} : {latitude},{longitude}")
     while True:
-        query = listen().lower()
+        # query = listen().lower()
+        query = input("Enter : ")
         if 'stop' in query or 'thank you' in query:
             print('Have a wonderful day!')
             speak('Have a wonderful day!')
@@ -256,15 +259,18 @@ if __name__ == "__main__":
                         print("Say that again please")
                         speak("Say that again please")
                     else:
-                        #print(data)
+                        # print(data)
                         for i in range(len(data['tracks']['items'][0]['artists'])):
                             artists.append(data['tracks']['items']
                                            [0]['artists'][i]['name'])
                         if artists == 1:
-                            print(f'The artist who sang this song is {artists}')
-                            speak(f'The artist who sang this song is {artists}')
+                            print(
+                                f'The artist who sang this song is {artists}')
+                            speak(
+                                f'The artist who sang this song is {artists}')
                         else:
-                            print(f'The artists who sang this song are {artists}')
+                            print(
+                                f'The artists who sang this song are {artists}')
                             speak(
                                 f'The artists who sang this song are {artists}')
             except Exception as e:
@@ -289,7 +295,8 @@ if __name__ == "__main__":
                 sunset = datetime.datetime.fromtimestamp(
                     sunset).strftime('%H:%M')
                 description = x["weather"][0]["description"]
-                print( f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
+                print(
+                    f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
                 speak(
                     f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius. The predicted forecast is {description}')
                 now = int(datetime.datetime.now().hour)
@@ -300,7 +307,7 @@ if __name__ == "__main__":
                     delta = delta_og - 12
                 if now > temp and now < delta_og:
                     minutes = sunset.find(":")
-                    time = '' + str(delta) + ':' + sunset[minutes:]
+                    time = '' + str(delta) + sunset[minutes:]
                     print(f"The sun will fall at {time} today")
                     speak(f"The sun will fall at {time} today")
                 elif now < temp:
@@ -309,3 +316,14 @@ if __name__ == "__main__":
                 elif 'hey' in query or 'hi' in query or 'hello' in query:
                     print('Hey there')
                     speak('Hey there!')
+        elif 'the time' in query:
+            time = datetime.datetime.now().strftime("%H:%M")
+            now = int(datetime.datetime.now().hour)
+            if now < 12:
+                print(f"It is {time} am now")
+                speak(f"It is {time} am now")
+            else:
+                now = now - 12
+                minutes = int(datetime.datetime.now().minute)
+                print(f"It is {now}:{minutes} pm now")
+                speak(f"It is {now}:{minutes} pm now")
