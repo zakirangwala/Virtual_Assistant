@@ -23,6 +23,7 @@ import webbrowser
 from playsound import playsound
 from spotify import SpotifyAPI
 import config
+import smtplib
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -197,6 +198,19 @@ def weather(latitude, longitude):
     else:
         return False
 
+# Send email
+
+
+def send_mail(subject, body, reciever):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(config.email, config.password)
+    msg = f"Subject: {subject}\n\n{body}"
+    server.sendmail(config.email, reciever, msg)
+    server.quit()
+
 
 # Main Method
 if __name__ == "__main__":
@@ -327,3 +341,23 @@ if __name__ == "__main__":
                 minutes = int(datetime.datetime.now().minute)
                 print(f"It is {now}:{minutes} pm now")
                 speak(f"It is {now}:{minutes} pm now")
+        elif 'send email' in query:
+            try:
+                print('Who do you want to send the email to?')
+                speak('Who do you want to send the email to?')
+                # reciever = listen()
+                one = input()
+                print('What is the subject?')
+                speak('What is the subject?')
+                # subject = listen()
+                two = input()
+                print('What is the message?')
+                speak('What is the message?')
+                # message = listen()
+                three = input()
+                send_mail(two, three, one)
+                print('Email successfully sent!')
+                speak('Email successfully sent!')
+            except Exception as e:
+                print('An error occurred, email could not be sent!')
+                speak('An error occurred, email could not be sent!')
