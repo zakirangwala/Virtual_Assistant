@@ -75,7 +75,7 @@ def listen():
         print("Recognizing...")
         speak('Recognizing')
         # playsound(sound.mp3)
-        query = r.recognize_google(audio, language='en-in')
+        query = r.recognize_google(audio, language='en-CA')
         print("User said: {}".format(query))
     except Exception as e:
         print("Say that again please")
@@ -220,7 +220,7 @@ def send_mail(subject, body, reciever):
 if __name__ == "__main__":
     # greet()
     city, country, latitude, longitude = get_location()
-    print(f"{city}, {country} : {latitude},{longitude}")
+    # print(f"{city}, {country} : {latitude},{longitude}")
     while True:
         # query = listen().lower()
         query = input("Enter : ")
@@ -297,7 +297,7 @@ if __name__ == "__main__":
         elif ('internet' in query and 'speed' in query) or 'speed test' in query:
             speed_check()
         elif 'weather' in query or 'temperature' in query:
-            if 'in' in query:
+            if 'in' in query and query[query.find('in') + 2:query.find('in') + 3] == ' ':
                 try:
                     city_name = query[query.find('in') + 3:]
                     api_key = config.api_key
