@@ -14,18 +14,20 @@ Twitter API : https://www.youtube.com/watch?v=dvAurfBB6Jk&list=PLEsfXFp6DpzQjDBv
 from bs4 import BeautifulSoup
 from googlesearch import search
 from json.decoder import JSONDecodeError
+from urllib.parse import urlencode
 import pyttsx3
 import datetime
 import speech_recognition as sr
 import speedtest
 import wikipedia as w
+import pandas as pd
 import requests
 import webbrowser
 from playsound import playsound
-from spotify import SpotifyAPI
 import config
 import smtplib
 import wolframalpha
+import base64
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -115,6 +117,118 @@ headers = {
 URL = ''
 
 # Spotify Integration
+
+
+class SpotifyAPI(object):
+    access_token = None
+    access_token_expires = datetime.datetime.now()
+    access_token_did_expire = True
+    client_id = None
+    client_secret = None
+    token_url = "https://accounts.spotify.com/api/token"
+
+    def __init__(self, client_id, client_secret, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.client_id = client_id
+        self.client_secret = client_secret
+
+    def get_client_credentials(self):
+        client_id = self.client_id
+        client_secret = self.client_secret
+        if client_secret == None or client_id == None:
+            raise Exception("You must set client_id and client_secret")
+        client_creds = f"{client_id}:{client_secret}"
+        client_creds_b64 = base64.b64encode(client_creds.encode())
+        return client_creds_b64.decode()
+
+    def get_token_headers(self):
+        client_creds_b64 = self.get_client_credentials()
+        return {
+            "Authorization": f"Basic {client_creds_b64}"
+        }
+
+    def get_token_data(self):
+        return {
+            "grant_type": "client_credentials"
+        }
+
+    def perform_auth(self):
+        token_url = self.token_url
+        token_data = self.get_token_data()
+        token_headers = self.get_token_headers()
+        r = requests.post(token_url, data=token_data, headers=token_headers)
+        if r.status_code not in range(200, 299):
+            raise Exception("Could not authenticate client.")
+            # return False
+        data = r.json()
+        now = datetime.datetime.now()
+        access_token = data['access_token']
+        expires_in = data['expires_in']  # seconds
+        expires = now + datetime.timedelta(seconds=expires_in)
+        self.access_token = access_token
+        self.access_token_expires = expires
+        self.access_token_did_expire = expires < now
+        return True
+
+    def get_access_token(self):
+        token = self.access_token
+        expires = self.access_token_expires
+        now = datetime.datetime.now()
+        if expires < now:
+            self.perform_auth()
+            return self.get_access_token()
+        elif token == None:
+            self.perform_auth()
+            return self.get_access_token()
+        return token
+
+    def get_resource_header(self):
+        access_token = self.get_access_token()
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+        return headers
+
+    def get_resource(self, lookup_id, resource_type='albums', version='v1'):
+        endpoint = f"https://api.spotify.com/{version}/{resource_type}/{lookup_id}"
+        headers = self.get_resource_header()
+        r = requests.get(endpoint, headers=headers)
+        if r.status_code not in range(200, 299):
+            return {}
+        return r.json()
+
+    def get_album(self, _id):
+        return self.get_resource(_id, resource_type='albums')
+
+    def get_artist(self, _id):
+        return self.get_resource(_id, resource_type='artists')
+
+    def base_search(self, query_params):  # type
+        headers = self.get_resource_header()
+        endpoint = "https://api.spotify.com/v1/search"
+        lookup_url = f"{endpoint}?{query_params}"
+        r = requests.get(lookup_url, headers=headers)
+        if r.status_code not in range(200, 299):
+            return {}
+        return r.json()
+
+    def search(self, query=None, operator=None, operator_query=None, search_type='artist'):
+        try:
+            if query == None:
+                raise Exception("A query is required")
+            if isinstance(query, dict):
+                query = " ".join([f"{k}:{v}" for k, v in query.items()])
+            if operator != None and operator_query != None:
+                if operator.lower() == "or" or operator.lower() == "not":
+                    operator = operator.upper()
+                    if isinstance(operator_query, str):
+                        query = f"{query} {operator} {operator_query}"
+            query_params = urlencode({"q": query, "type": search_type.lower()})
+        except Exception as e:
+            return False
+        return self.base_search(query_params)
+
+# Spotify Search Method
 
 
 def song_credits(song):
@@ -236,7 +350,7 @@ if __name__ == "__main__":
             print('Zaki')
             speak('Zaki')
         elif 'wikipedia' in query:
-            try : 
+            try:
                 print('Searching...')
                 speak('Searching...')
                 query = query.replace('wikipedia', '')
@@ -260,7 +374,7 @@ if __name__ == "__main__":
                 print("The price of {} is {} {}".format(title, price, currency))
                 speak("The price of {} is {} {}".format(title, price, currency))
         elif 'open' in query:
-            try :
+            try:
                 print('Opening..')
                 speak('Opening')
                 if 'google' in query:
@@ -314,7 +428,7 @@ if __name__ == "__main__":
                     city_name = query[query.find('in') + 3:]
                     api_key = config.api_key
                     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
-                    complete_url = base_url + "q=" + city_name + "&appid=" + api_key   
+                    complete_url = base_url + "q=" + city_name + "&appid=" + api_key
                     response = requests.get(complete_url)
                     x = response.json()
                 except Exception as e:
@@ -403,8 +517,10 @@ if __name__ == "__main__":
                 speak('What is the message?')
                 # message = listen()
                 message = input()
-                print(f'Send to : {reciever}\nSubject : {subject}\nMessage : {message}\nAre you sure you want to send the message?')
-                speak(f'Email is being sent to {reciever}. The subject is {subject}. The message says {message}. Are you sure you want to send the message?')
+                print(
+                    f'Send to : {reciever}\nSubject : {subject}\nMessage : {message}\nAre you sure you want to send the message?')
+                speak(
+                    f'Email is being sent to {reciever}. The subject is {subject}. The message says {message}. Are you sure you want to send the message?')
                 # query = listen().lower()
                 query = input()
                 if 'yes' in query:
