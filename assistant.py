@@ -25,7 +25,7 @@ from playsound import playsound
 from spotify import SpotifyAPI
 import config
 import smtplib
-import wolframalpha as w
+import wolframalpha
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -167,21 +167,25 @@ def speed_check():
         speak(
             f'Download speed is {speed[0]} megabytes per second  upload speed is {speed[1]} megabytes per second, ping is {speed[2]} milliseconds ')
     except Exception as e:
-        print("Say that again please")
-        speak("Say that again please")
+        print("Could not execute speedtest")
+        speak("Could not execute speedtest")
 
 # Get Location
 
 
 def get_location():
-    URL = 'https://iplocation.com/'
-    page = requests.get(URL, headers=headers)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    city = soup.find(class_='city').get_text()
-    country = soup.find(class_='country_name').get_text()
-    latitude = soup.find(class_='lat').get_text()
-    longitude = soup.find(class_='lng').get_text()
-    return city, country, latitude, longitude
+    try:
+        URL = 'https://iplocation.com/'
+        page = requests.get(URL, headers=headers)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        city = soup.find(class_='city').get_text()
+        country = soup.find(class_='country_name').get_text()
+        latitude = soup.find(class_='lat').get_text()
+        longitude = soup.find(class_='lng').get_text()
+        return city, country, latitude, longitude
+    except Exception as e:
+        print('Error, location could not be retrieved')
+        speak('Error, location could not be retrieved')
 
 # Check Weather
 
@@ -195,8 +199,8 @@ def weather(latitude, longitude):
         response = requests.get(complete_url)
         x = response.json()
     except Exception as e:
-        print("Say that again please")
-        speak("Say that again please")
+        print("An error occurred while retrieving weather information")
+        speak("An error occurred while retrieving weather information")
     if x["cod"] != "404":
         return x
     else:
@@ -224,7 +228,7 @@ if __name__ == "__main__":
     while True:
         # query = listen().lower()
         query = input("Enter : ")
-        if 'stop' in query or 'thank you' in query:
+        if ('stop' in query and query[query.find('stop') + 4:query.find('stop') + 5] == '') or ('thank you' in query and query[query.find('thank you') + 9:query.find('thank you') + 10] == ''):
             print('Have a wonderful day!')
             speak('Have a wonderful day!')
             break
@@ -232,50 +236,58 @@ if __name__ == "__main__":
             print('Zaki')
             speak('Zaki')
         elif 'wikipedia' in query:
-            print('Searching...')
-            speak('Searching...')
-            query = query.replace('wikipedia', '')
-            results = w.summary(query, sentences=1)
-            speak("According to Wikipedia")
-            print("According to Wikipedia : {} ".format(results))
-            speak(results)
+            try : 
+                print('Searching...')
+                speak('Searching...')
+                query = query.replace('wikipedia', '')
+                results = w.summary(query, sentences=1)
+                speak("According to Wikipedia")
+                print("According to Wikipedia : {} ".format(results))
+                speak(results)
+            except Exception as e:
+                print("Could not search wikipedia")
+                speak("Could not search wikipedia")
         elif 'stock' in query:
             query += query + " Yahoo Finance"
             print('Searching...')
             speak('Searching...')
             URL = google_query(query)[0]
             if check_price() == False:
-                print("Say that again please")
-                speak("Say that again please")
+                print("Stock Price could not be calculated")
+                speak("Stock Price could not be calculated")
             else:
                 currency, title, price = check_price()
                 print("The price of {} is {} {}".format(title, price, currency))
                 speak("The price of {} is {} {}".format(title, price, currency))
         elif 'open' in query:
-            print('Opening..')
-            speak('Opening')
-            if 'google' in query:
-                open_browser('google.ca')
-            elif 'my website' in query:
-                open_browser('https://zakirangwala.com/')
-            else:
-                query = query.replace('open', '')
-                query += ' website '
-                URL = google_query(query)[0]
-                open_browser(URL)
+            try :
+                print('Opening..')
+                speak('Opening')
+                if 'google' in query:
+                    open_browser('google.ca')
+                elif 'my website' in query:
+                    open_browser('https://zakirangwala.com/')
+                else:
+                    query = query.replace('open', '')
+                    query += ' website '
+                    URL = google_query(query)[0]
+                    open_browser(URL)
+            except Exception as e:
+                print("Browser could not be opened")
+                speak("Browser could not be opened")
         elif 'song' in query:
             try:
                 index = query.find('song') + 5
                 if index == 4:
-                    print("Say that again please")
-                    speak("Say that again please")
+                    print("Please repeat your query")
+                    speak("Please repeat your query")
                 else:
                     song = query[index:]
                     data = song_credits(song)
                     artists = []
                     if data['tracks']['total'] == 0:
-                        print("Say that again please")
-                        speak("Say that again please")
+                        print("Song could not be found")
+                        speak("Song could not be found")
                     else:
                         # print(data)
                         for i in range(len(data['tracks']['items'][0]['artists'])):
@@ -292,9 +304,9 @@ if __name__ == "__main__":
                             speak(
                                 f'The artists who sang this song are {artists}')
             except Exception as e:
-                print("Say that again please")
-                speak("Say that again please")
-        elif ('internet' in query and 'speed' in query) or 'speed test' in query:
+                print("An error occured while fetching song data")
+                speak("An error occured while fetching song data")
+        elif ('internet' in query and 'speed' in query) or 'speed test' in query or 'speedtest' in query:
             speed_check()
         elif 'weather' in query or 'temperature' in query:
             if 'in' in query and query[query.find('in') + 2:query.find('in') + 3] == ' ':
@@ -306,8 +318,8 @@ if __name__ == "__main__":
                     response = requests.get(complete_url)
                     x = response.json()
                 except Exception as e:
-                    print("Say that again please")
-                    speak("Say that again please")
+                    print("City could not be found")
+                    speak("City could not be found")
                 if x["cod"] == "404":
                     print('Please try again')
                     speak('Please try again')
@@ -362,7 +374,7 @@ if __name__ == "__main__":
                     elif now < temp:
                         print(f"The sun will rise at {sunrise} am today")
                         speak(f"The sun will rise at {sunrise} am today")
-        elif 'hey' in query or 'hi' in query or 'hello' in query:
+        elif ('hey' in query and query[query.find('hey') + 3:query.find('hey') + 4] == '' or query[query.find('hey') + 3:query.find('hey') + 4] == ' ') or ('hi' in query and query[query.find('hi') + 2:query.find('hi') + 3] == '' or query[query.find('hi') + 2:query.find('hi') + 3] == ' ') or ('hello' in query and query[query.find('hello') + 5:query.find('hello') + 6] == '' or query[query.find('hello') + 5:query.find('hello') + 6] == ' '):
             print('Hey there')
             speak('Hey there!')
         elif 'the time' in query:
@@ -372,7 +384,8 @@ if __name__ == "__main__":
                 print(f"It is {time} am now")
                 speak(f"It is {time} am now")
             else:
-                now = now - 12
+                if now > 12:
+                    now = now - 12
                 minutes = int(datetime.datetime.now().minute)
                 print(f"It is {now}:{minutes} pm now")
                 speak(f"It is {now}:{minutes} pm now")
@@ -380,20 +393,20 @@ if __name__ == "__main__":
             try:
                 print('Who do you want to send the email to?')
                 speak('Who do you want to send the email to?')
-                reciever = listen()
-                # reciever = input()
+                # reciever = listen()
+                reciever = input()
                 print('What is the subject?')
                 speak('What is the subject?')
-                subject = listen()
-                # subject = input()
+                # subject = listen()
+                subject = input()
                 print('What is the message?')
                 speak('What is the message?')
-                message = listen()
-                # message = input()
+                # message = listen()
+                message = input()
                 print(f'Send to : {reciever}\nSubject : {subject}\nMessage : {message}\nAre you sure you want to send the message?')
-                speak(f'Email is being sent to {reciever}. The subject Subject is {subject}. The message says {message}. Are you sure you want to send the message?')
-                query = listen().lower()
-                # query = input()
+                speak(f'Email is being sent to {reciever}. The subject is {subject}. The message says {message}. Are you sure you want to send the message?')
+                # query = listen().lower()
+                query = input()
                 if 'yes' in query:
                     send_mail(subject, message, reciever)
                     print('Email successfully sent!')
@@ -406,7 +419,7 @@ if __name__ == "__main__":
                 speak('An error occurred, email could not be sent!')
         elif 'search' in query:
             try:
-                client = w.Client(config.app_id)
+                client = wolframalpha.Client(config.app_id)
                 # query = listen()
                 query = input()
                 res = client.query(query)
@@ -414,5 +427,5 @@ if __name__ == "__main__":
                 print(output)
                 speak(output)
             except Exception as e:
-                print('An error occurred, please try again')
-                speak('An error occurred, please try again')
+                print('An error occurred,could not search the internet')
+                speak('An error occurred,could not search the internet')
