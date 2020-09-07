@@ -1,5 +1,6 @@
 """
 Things to add :
+News
 Downdetector API
 Bus/Subway Times
 What,Where,How,Why : Google Search
@@ -24,6 +25,7 @@ from playsound import playsound
 from spotify import SpotifyAPI
 import config
 import smtplib
+import wolframalpha as w
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -66,12 +68,14 @@ def listen():
         print("Listening...")
         #speak("I'm Listening")
         r.pause_threshold = 1
-        audio = r.listen(source, timeout=1, phrase_time_limit=5)
+        # audio = r.listen(source, timeout=1, phrase_time_limit=5)
+        r.adjust_for_ambient_noise(source, duration=1)
+        audio = r.listen(source)
     try:
         print("Recognizing...")
         speak('Recognizing')
         # playsound(sound.mp3)
-        query = r.recognize_google(audio, language='en-CA')
+        query = r.recognize_google(audio, language='en-in')
         print("User said: {}".format(query))
     except Exception as e:
         print("Say that again please")
@@ -224,7 +228,7 @@ if __name__ == "__main__":
             print('Have a wonderful day!')
             speak('Have a wonderful day!')
             break
-        elif "what's my name" in query:
+        elif "my name" in query:
             print('Zaki')
             speak('Zaki')
         elif 'wikipedia' in query:
@@ -293,43 +297,74 @@ if __name__ == "__main__":
         elif ('internet' in query and 'speed' in query) or 'speed test' in query:
             speed_check()
         elif 'weather' in query or 'temperature' in query:
-            x = weather(latitude, longitude)
-            if x == False:
-                print('Please try again')
-                speak('Please try again')
+            if 'in' in query:
+                try:
+                    city_name = query[query.find('in') + 3:]
+                    api_key = config.api_key
+                    base_url = 'http://api.openweathermap.org/data/2.5/weather?'
+                    complete_url = base_url + "q=" + city_name + "&appid=" + api_key   
+                    response = requests.get(complete_url)
+                    x = response.json()
+                except Exception as e:
+                    print("Say that again please")
+                    speak("Say that again please")
+                if x["cod"] == "404":
+                    print('Please try again')
+                    speak('Please try again')
+                else:
+                    temp = (int)((x["main"]["temp"]) - 273.15)
+                    feel = (int)((x["main"]["feels_like"]) - 273.15)
+                    min_ = (int)((x["main"]["temp_min"]) - 273.15)
+                    max_ = (int)((x["main"]["temp_max"]) - 273.15)
+                    sunrise = x["sys"]["sunrise"]
+                    sunrise = datetime.datetime.fromtimestamp(
+                        sunrise).strftime('%H:%M')
+                    sunset = x["sys"]["sunset"]
+                    sunset = datetime.datetime.fromtimestamp(
+                        sunset).strftime('%H:%M')
+                    description = x["weather"][0]["description"]
+                    print(
+                        f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
+                    speak(
+                        f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius. The predicted forecast is {description}')
             else:
-                temp = (int)((x["main"]["temp"]) - 273.15)
-                feel = (int)((x["main"]["feels_like"]) - 273.15)
-                min_ = (int)((x["main"]["temp_min"]) - 273.15)
-                max_ = (int)((x["main"]["temp_max"]) - 273.15)
-                sunrise = x["sys"]["sunrise"]
-                sunrise = datetime.datetime.fromtimestamp(
-                    sunrise).strftime('%H:%M')
-                sunset = x["sys"]["sunset"]
-                sunset = datetime.datetime.fromtimestamp(
-                    sunset).strftime('%H:%M')
-                description = x["weather"][0]["description"]
-                print(
-                    f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
-                speak(
-                    f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius. The predicted forecast is {description}')
-                now = int(datetime.datetime.now().hour)
-                temp = sunrise[0:2]
-                temp = int(temp)
-                delta_og = int(sunset[0:2])
-                if delta_og > 12:
-                    delta = delta_og - 12
-                if now > temp and now < delta_og:
-                    minutes = sunset.find(":")
-                    time = '' + str(delta) + sunset[minutes:]
-                    print(f"The sun will fall at {time} today")
-                    speak(f"The sun will fall at {time} today")
-                elif now < temp:
-                    print(f"The sun will rise at {sunrise} today")
-                    speak(f"The sun will rise at {sunrise} today")
-                elif 'hey' in query or 'hi' in query or 'hello' in query:
-                    print('Hey there')
-                    speak('Hey there!')
+                x = weather(latitude, longitude)
+                if x == False:
+                    print('Please try again')
+                    speak('Please try again')
+                else:
+                    temp = (int)((x["main"]["temp"]) - 273.15)
+                    feel = (int)((x["main"]["feels_like"]) - 273.15)
+                    min_ = (int)((x["main"]["temp_min"]) - 273.15)
+                    max_ = (int)((x["main"]["temp_max"]) - 273.15)
+                    sunrise = x["sys"]["sunrise"]
+                    sunrise = datetime.datetime.fromtimestamp(
+                        sunrise).strftime('%H:%M')
+                    sunset = x["sys"]["sunset"]
+                    sunset = datetime.datetime.fromtimestamp(
+                        sunset).strftime('%H:%M')
+                    description = x["weather"][0]["description"]
+                    print(
+                        f'The temperature is {temp}°C and it feels like {feel} °C\nThe low is {min_}°C and the high is {max_}°C\nThe predicted forecast is {description}')
+                    speak(
+                        f'The temperature is {temp} degrees celsius. It feels like {feel} degrees celsius. The low is {min_} degrees celsius and the high is {max_} degrees celsius. The predicted forecast is {description}')
+                    now = int(datetime.datetime.now().hour)
+                    temp = sunrise[0:2]
+                    temp = int(temp)
+                    delta_og = int(sunset[0:2])
+                    if delta_og > 12:
+                        delta = delta_og - 12
+                    if now > temp and now < delta_og:
+                        minutes = sunset.find(":")
+                        time = '' + str(delta) + sunset[minutes:]
+                        print(f"The sun will fall at {time} pm today")
+                        speak(f"The sun will fall at {time} pm today")
+                    elif now < temp:
+                        print(f"The sun will rise at {sunrise} am today")
+                        speak(f"The sun will rise at {sunrise} am today")
+        elif 'hey' in query or 'hi' in query or 'hello' in query:
+            print('Hey there')
+            speak('Hey there!')
         elif 'the time' in query:
             time = datetime.datetime.now().strftime("%H:%M")
             now = int(datetime.datetime.now().hour)
@@ -341,23 +376,43 @@ if __name__ == "__main__":
                 minutes = int(datetime.datetime.now().minute)
                 print(f"It is {now}:{minutes} pm now")
                 speak(f"It is {now}:{minutes} pm now")
-        elif 'send email' in query:
+        elif 'send' in query and 'email' in query:
             try:
                 print('Who do you want to send the email to?')
                 speak('Who do you want to send the email to?')
-                # reciever = listen()
-                one = input()
+                reciever = listen()
+                # reciever = input()
                 print('What is the subject?')
                 speak('What is the subject?')
-                # subject = listen()
-                two = input()
+                subject = listen()
+                # subject = input()
                 print('What is the message?')
                 speak('What is the message?')
-                # message = listen()
-                three = input()
-                send_mail(two, three, one)
-                print('Email successfully sent!')
-                speak('Email successfully sent!')
+                message = listen()
+                # message = input()
+                print(f'Send to : {reciever}\nSubject : {subject}\nMessage : {message}\nAre you sure you want to send the message?')
+                speak(f'Email is being sent to {reciever}. The subject Subject is {subject}. The message says {message}. Are you sure you want to send the message?')
+                query = listen().lower()
+                # query = input()
+                if 'yes' in query:
+                    send_mail(subject, message, reciever)
+                    print('Email successfully sent!')
+                    speak('Email successfully sent!')
+                else:
+                    print('Cancelled!')
+                    speak('Cancelled!')
             except Exception as e:
                 print('An error occurred, email could not be sent!')
                 speak('An error occurred, email could not be sent!')
+        elif 'search' in query:
+            try:
+                client = w.Client(config.app_id)
+                # query = listen()
+                query = input()
+                res = client.query(query)
+                output = next(res.results).text
+                print(output)
+                speak(output)
+            except Exception as e:
+                print('An error occurred, please try again')
+                speak('An error occurred, please try again')
