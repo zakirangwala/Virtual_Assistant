@@ -1,5 +1,8 @@
 """
 Things to add :
+https://www.youtube.com/watch?v=yxSKrVXeKcI&list=PLqgOPibB_QnzzcaOFYmY2cQjs35y0is9N&index=2&t=0s
+https://github.com/mps-youtube/mps-youtube
+https://dev.to/helloiamarra/how-to-play-spotify-songs-and-show-the-album-art-using-spotipy-library-and-python-5eki
 News
 Downdetector API
 Bus/Subway Times
@@ -560,8 +563,8 @@ if __name__ == "__main__":
                     for text in matches:
                         if query in text:
                             result.append(True)
-                            print(f'For {keys[j]} The last updated score was {text}')
-                            speak(f'For {keys[j]} The last updated score was {text}')
+                            print(f'{keys[j]} : The last updated score was {text}')
+                            speak(f'{keys[j]} : The last updated score was {text}')
                         else:
                             result.append(False)
                 if True not in result:
