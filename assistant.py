@@ -67,6 +67,7 @@ def greet():
 def listen():
     r = sr.Recognizer()
     with sr.Microphone() as source:
+        playsound('sound.mp3')
         print("Listening...")
         #speak("I'm Listening")
         r.pause_threshold = 1
@@ -76,7 +77,6 @@ def listen():
     try:
         print("Recognizing...")
         speak('Recognizing')
-        # playsound(sound.mp3)
         query = r.recognize_google(audio, language='en-CA')
         print("User said: {}".format(query))
     except Exception as e:
