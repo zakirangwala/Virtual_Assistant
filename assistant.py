@@ -28,6 +28,7 @@ import config
 import smtplib
 import wolframalpha
 import base64
+import sports
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -545,3 +546,27 @@ if __name__ == "__main__":
             except Exception as e:
                 print('An error occurred,could not search the internet')
                 speak('An error occurred,could not search the internet')
+        elif 'score' in query:
+            try :
+                result = []
+                query = query.replace('score','')
+                all_matches = sports.all_matches()
+                keys = list(all_matches.keys())
+                for j in range(len(keys)):
+                    temp = all_matches[keys[j]]
+                    matches = []
+                    for i in range(len(temp)):
+                        matches.append((str(temp[i])).lower())
+                    for text in matches:
+                        if query in text:
+                            result.append(True)
+                            print(f'For {keys[j]} The last updated score was {text}')
+                            speak(f'For {keys[j]} The last updated score was {text}')
+                        else:
+                            result.append(False)
+                if True not in result:
+                    print('Could not retrieve game scores')
+                    speak('Could not retrieve game scores')
+            except Exception as e:
+                print('An error occurred, please try again')
+                speak('An error occurred, please try again')
