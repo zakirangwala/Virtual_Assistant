@@ -1,18 +1,3 @@
-"""
-Things to add :
-https://www.youtube.com/watch?v=yxSKrVXeKcI&list=PLqgOPibB_QnzzcaOFYmY2cQjs35y0is9N&index=2&t=0s
-https://github.com/mps-youtube/mps-youtube
-https://dev.to/helloiamarra/how-to-play-spotify-songs-and-show-the-album-art-using-spotipy-library-and-python-5eki
-News
-Downdetector API
-Bus/Subway Times
-What,Where,How,Why : Google Search
-Spotify Music
-Read Inbox and Emails : https://www.youtube.com/watch?v=6DD4IOHhNYo&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=9
-Maps API : https://www.youtube.com/watch?v=ckPEY2KppHc&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=20
-Twitter API : https://www.youtube.com/watch?v=dvAurfBB6Jk&list=PLEsfXFp6DpzQjDBvhNy5YbaBx9j-ZsUe6&index=21
-"""
-
 # Import Libraries
 from bs4 import BeautifulSoup
 from googlesearch import search
