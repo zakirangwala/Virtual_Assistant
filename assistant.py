@@ -17,6 +17,7 @@ import smtplib
 import wolframalpha
 import base64
 import sports
+import imdb
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -342,7 +343,7 @@ if __name__ == "__main__":
             try:
                 print('Searching...')
                 speak('Searching...')
-                query = query.replace('wikipedia', '')
+                query = query.replace(' wikipedia', '')
                 results = w.summary(query, sentences=1)
                 speak("According to Wikipedia")
                 print("According to Wikipedia : {} ".format(results))
@@ -371,7 +372,7 @@ if __name__ == "__main__":
                 elif 'my website' in query:
                     open_browser('https://zakirangwala.com/')
                 else:
-                    query = query.replace('open', '')
+                    query = query.replace('open ', '')
                     query += ' website '
                     URL = google_query(query)[0]
                     open_browser(URL)
@@ -520,17 +521,71 @@ if __name__ == "__main__":
                 print('An error occurred, email could not be sent!')
                 speak('An error occurred, email could not be sent!')
         elif 'search' in query:
-            try:
-                client = wolframalpha.Client(config.app_id)
-                # query = listen()
-                query = input()
-                res = client.query(query)
-                output = next(res.results).text
-                print(output)
-                speak(output)
-            except Exception as e:
-                print('An error occurred,could not search the internet')
-                speak('An error occurred,could not search the internet')
+            query = query.replace('search ','')
+            if 'movie' in query:
+                try:
+                    query = query.replace(' movie','')
+                    print(f'Searching for {query}...')
+                    speak(f'Searching database for {query}')
+                    moviesDB = imdb.IMDb()
+                    movies = moviesDB.search_movie(query)
+                    id = movies[0].getID()
+                    movie = moviesDB.get_movie(id)
+                    title = movie['title']
+                    year = movie['year']
+                    rating = movie['rating']
+                    directors = ' '.join(map(str,movie['directors']))
+                    casting = movie['cast']
+                    this = ''
+                    for i in range(8):
+                        this += str (casting[i]) + ', '
+                    print(f'{title} ({year}) : {rating}\nDirected by : {directors}')
+                    print(f'Cast includes : {this}')
+                    speak(f'{title} is a {year} movie directed by {directors} with an IMDB rating of {rating}. Notable cast members include {this}')
+                except Exception as e:
+                    print('Could not retrive movie title')
+                    speak('Could not retrive movie title')
+            elif 'actor' in query or 'actress' in query:
+                try :
+                    check = query.find('actor')
+                    role = ''
+                    if check == -1 :
+                        query = query.replace(' actress','')
+                        role = 'actress'
+                    else:
+                        query = query.replace(' actor','')
+                        role = 'actor'
+                    print(f'Searching for {query}...')
+                    speak(f'Searching database for {query}')
+                    peopleDB = imdb.IMDb()
+                    people = peopleDB.search_person(query)
+                    id = people[0].getID()
+                    person = peopleDB.get_person(id)
+                    name = person['name']
+                    birth = person['birth date']
+                    bio = str(person['mini biography'][0])
+                    res = [i for i in range(len(bio)) if bio.startswith('. ', i)]
+                    bio = bio[0:res[1]]
+                    films = person['filmography'][0][role]
+                    this = ''
+                    for i in range(8):
+                        this += str(films[i]) + ', '
+                        this = this.replace(' ()', '')
+                    print(f'{bio}\n{name} has starred in {this}')
+                    speak(f'{bio}\n{name} has starred in {this}')
+                except Exception as e:
+                    print('Could not retrive requested information')
+                    speak('Could not retrive requested information')
+            else:
+                try:
+                    client = wolframalpha.Client(config.app_id)
+                    res = client.query(query)
+                    output = next(res.results).text
+                    print(output)
+                    speak(output)
+                except Exception as e:
+                    print('An error occurred,could not search the internet')
+                    speak('An error occurred,could not search the internet')
         elif 'score' in query:
             try :
                 result = []
