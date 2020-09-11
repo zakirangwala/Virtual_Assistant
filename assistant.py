@@ -534,7 +534,7 @@ if __name__ == "__main__":
         elif 'score' in query:
             try :
                 result = []
-                query = query.replace('score','')
+                query = query.replace(' score','')
                 all_matches = sports.all_matches()
                 keys = list(all_matches.keys())
                 for j in range(len(keys)):
@@ -546,7 +546,7 @@ if __name__ == "__main__":
                         if query in text:
                             result.append(True)
                             print(f'{keys[j]} : The last updated score was {text}')
-                            speak(f'{keys[j]} : The last updated score was {text}')
+                            speak(f'The last updated score was {text} : {keys[j]}')
                         else:
                             result.append(False)
                 if True not in result:
