@@ -477,9 +477,6 @@ if __name__ == "__main__":
                     elif now < temp:
                         print(f"The sun will rise at {sunrise} am today")
                         speak(f"The sun will rise at {sunrise} am today")
-        elif ('hey' in query and query[query.find('hey') + 3:query.find('hey') + 4] == '' or query[query.find('hey') + 3:query.find('hey') + 4] == ' ') or ('hi' in query and query[query.find('hi') + 2:query.find('hi') + 3] == '' or query[query.find('hi') + 2:query.find('hi') + 3] == ' ') or ('hello' in query and query[query.find('hello') + 5:query.find('hello') + 6] == '' or query[query.find('hello') + 5:query.find('hello') + 6] == ' '):
-            print('Hey there')
-            speak('Hey there!')
         elif 'the time' in query:
             time = datetime.datetime.now().strftime("%H:%M")
             now = int(datetime.datetime.now().hour)
@@ -558,3 +555,6 @@ if __name__ == "__main__":
             except Exception as e:
                 print('An error occurred, please try again')
                 speak('An error occurred, please try again')
+        elif ('hey' in query and query[query.find('hey') + 3:query.find('hey') + 4] == '' or query[query.find('hey') + 3:query.find('hey') + 4] == ' ') or ('hi' in query and query[query.find('hi') + 2:query.find('hi') + 3] == '' or query[query.find('hi') + 2:query.find('hi') + 3] == ' ') or ('hello' in query and query[query.find('hello') + 5:query.find('hello') + 6] == '' or query[query.find('hello') + 5:query.find('hello') + 6] == ' '):
+            print('Hey there')
+            speak('Hey there!')
