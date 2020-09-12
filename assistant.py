@@ -336,9 +336,6 @@ if __name__ == "__main__":
             print('Have a wonderful day!')
             speak('Have a wonderful day!')
             break
-        elif "my name" in query:
-            print('Zaki')
-            speak('Zaki')
         elif 'wikipedia' in query:
             try:
                 print('Searching...')
@@ -478,18 +475,6 @@ if __name__ == "__main__":
                     elif now < temp:
                         print(f"The sun will rise at {sunrise} am today")
                         speak(f"The sun will rise at {sunrise} am today")
-        elif 'the time' in query:
-            time = datetime.datetime.now().strftime("%H:%M")
-            now = int(datetime.datetime.now().hour)
-            if now < 12:
-                print(f"It is {time} am now")
-                speak(f"It is {time} am now")
-            else:
-                if now > 12:
-                    now = now - 12
-                minutes = int(datetime.datetime.now().minute)
-                print(f"It is {now}:{minutes} pm now")
-                speak(f"It is {now}:{minutes} pm now")
         elif 'send' in query and 'email' in query:
             try:
                 print('Who do you want to send the email to?')
@@ -521,10 +506,10 @@ if __name__ == "__main__":
                 print('An error occurred, email could not be sent!')
                 speak('An error occurred, email could not be sent!')
         elif 'search' in query:
-            query = query.replace('search ','')
+            query = query.replace('search ', '')
             if 'movie' in query:
                 try:
-                    query = query.replace(' movie','')
+                    query = query.replace(' movie', '')
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     moviesDB = imdb.IMDb()
@@ -534,27 +519,43 @@ if __name__ == "__main__":
                     title = movie['title']
                     year = movie['year']
                     rating = movie['rating']
-                    directors = ' '.join(map(str,movie['directors']))
+                    directors = ' '.join(map(str, movie['directors']))
                     casting = movie['cast']
                     this = ''
                     for i in range(8):
-                        this += str (casting[i]) + ', '
+                        this += str(casting[i]) + ', '
                     print(f'{title} ({year}) : {rating}\nDirected by : {directors}')
                     print(f'Cast includes : {this}')
-                    speak(f'{title} is a {year} movie directed by {directors} with an IMDB rating of {rating}. Notable cast members include {this}')
+                    speak(
+                        f'{title} is a {year} movie directed by {directors} with an IMDB rating of {rating}. Notable cast members include {this}')
+                    print('Would you like to hear the synopsis?')
+                    speak('Would you like to hear the synopsis?')
+                    #query = listen().lower()
+                    query = input()
+                    if 'yes' in query:
+                        synopsis = str(movie['synopsis'][0])
+                        result = [i for i in range(
+                            len(synopsis)) if synopsis.startswith('. ', i)]
+                        for i in result:
+                            if i >= 500:
+                                temp = synopsis[0:i]
+                                break
+                        print(temp)
+                        speak(temp)
                 except Exception as e:
                     print('Could not retrive movie title')
                     speak('Could not retrive movie title')
-            elif 'actor' in query or 'actress' in query:
-                try :
-                    check = query.find('actor')
+            elif 'actor' in query or 'actress' in query or 'producer' in query or 'writer' in query or 'director' in query:
+                try:
+                    check = {'actor': query.find('actor'), 'actress': query.find('actress'), 'producer': query.find(
+                        'producer'), 'writer': query.find('writer'), 'director': query.find('director')}
+                    keys = list(check.keys())
                     role = ''
-                    if check == -1 :
-                        query = query.replace(' actress','')
-                        role = 'actress'
-                    else:
-                        query = query.replace(' actor','')
-                        role = 'actor'
+                    for j in keys:
+                        if check[j] != -1:
+                            query = query.replace(f' {j}', '')
+                            role = j
+                            break
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     peopleDB = imdb.IMDb()
@@ -564,15 +565,20 @@ if __name__ == "__main__":
                     name = person['name']
                     birth = person['birth date']
                     bio = str(person['mini biography'][0])
-                    res = [i for i in range(len(bio)) if bio.startswith('. ', i)]
-                    bio = bio[0:res[1]]
-                    films = person['filmography'][0][role]
+                    res = [i for i in range(
+                        len(bio)) if bio.startswith('. ', i)]
+                    for i in res:
+                        if i >= 500:
+                            bio = bio[0:i]
+                            break
+                    keys = list(person['filmography'][0].keys())
+                    films = person['filmography'][0][keys[0]]
                     this = ''
-                    for i in range(8):
+                    for i in range(10):
                         this += str(films[i]) + ', '
                         this = this.replace(' ()', '')
-                    print(f'{bio}\n{name} has starred in {this}')
-                    speak(f'{bio}\n{name} has starred in {this}')
+                    print(f'{bio}\n{name} is known for {this}')
+                    speak(f'{bio}\n{name} is known for {this}')
                 except Exception as e:
                     print('Could not retrive requested information')
                     speak('Could not retrive requested information')
@@ -587,9 +593,9 @@ if __name__ == "__main__":
                     print('An error occurred,could not search the internet')
                     speak('An error occurred,could not search the internet')
         elif 'score' in query:
-            try :
+            try:
                 result = []
-                query = query.replace(' score','')
+                query = query.replace(' score', '')
                 all_matches = sports.all_matches()
                 keys = list(all_matches.keys())
                 for j in range(len(keys)):
@@ -600,8 +606,10 @@ if __name__ == "__main__":
                     for text in matches:
                         if query in text:
                             result.append(True)
-                            print(f'{keys[j]} : The last updated score was {text}')
-                            speak(f'The last updated score was {text} : {keys[j]}')
+                            print(
+                                f'{keys[j]} : The last updated score was {text}')
+                            speak(
+                                f'The last updated score was {text} : {keys[j]}')
                         else:
                             result.append(False)
                 if True not in result:
@@ -613,3 +621,18 @@ if __name__ == "__main__":
         elif ('hey' in query and query[query.find('hey') + 3:query.find('hey') + 4] == '' or query[query.find('hey') + 3:query.find('hey') + 4] == ' ') or ('hi' in query and query[query.find('hi') + 2:query.find('hi') + 3] == '' or query[query.find('hi') + 2:query.find('hi') + 3] == ' ') or ('hello' in query and query[query.find('hello') + 5:query.find('hello') + 6] == '' or query[query.find('hello') + 5:query.find('hello') + 6] == ' '):
             print('Hey there')
             speak('Hey there!')
+        elif "my name" in query:
+            print('Zaki')
+            speak('Zaki')
+        elif 'the time' in query:
+            time = datetime.datetime.now().strftime("%H:%M")
+            now = int(datetime.datetime.now().hour)
+            if now < 12:
+                print(f"It is {time} am now")
+                speak(f"It is {time} am now")
+            else:
+                if now > 12:
+                    now = now - 12
+                minutes = int(datetime.datetime.now().minute)
+                print(f"It is {now}:{minutes} pm now")
+                speak(f"It is {now}:{minutes} pm now")
