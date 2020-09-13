@@ -323,6 +323,23 @@ def send_mail(subject, body, reciever):
     server.sendmail(config.email, reciever, msg)
     server.quit()
 
+# Rotten Tomatoes Score
+
+
+def rotten_tomatoes_score(query):
+    try :
+        query += query + " Rotten Tomatoes"
+        URL = google_query(query)[0]
+        page = requests.get(URL, headers=headers)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        res = soup.find(class_='mop-ratings-wrap__percentage').get_text()
+        check = res.split(' ')
+        for i in check:
+            if len(i) > 1:
+                return i
+    except Exception as e:
+        print('Could not retrieve tomatometer score')
+        speak('Could not retrieve tomatometer score')
 
 # Main Method
 if __name__ == "__main__":
@@ -514,6 +531,7 @@ if __name__ == "__main__":
                     speak(f'Searching database for {query}')
                     moviesDB = imdb.IMDb()
                     movies = moviesDB.search_movie(query)
+                    score = rotten_tomatoes_score(query)
                     id = movies[0].getID()
                     movie = moviesDB.get_movie(id)
                     title = movie['title']
@@ -534,10 +552,11 @@ if __name__ == "__main__":
                                 out += (str(directors[i]))
                     else:
                         out = (f'Directed by : {str(directors[0])}')
-                    print(f'{title} ({year}) : {rating}')
+                    print(f'{title} ({year})\nIMDB - {rating}\nRotten Tomato - {score}')
                     print(out)
                     print(f'Cast includes : {this}')
-                    speak(f'{title} is a {year} movie with an IMDB rating of {rating} {out}. Notable cast members include {this}')
+                    speak(
+                        f'{title} is a {year} movie with an IMDB rating of {rating} and a Rotten Tomato score of {score} {out}. Notable cast members include {this}')
                     print('Would you like to hear the synopsis?')
                     speak('Would you like to hear the synopsis?')
                     #query = listen().lower()
@@ -600,6 +619,7 @@ if __name__ == "__main__":
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     seriesDB = imdb.IMDb()
+                    score = rotten_tomatoes_score(query)
                     res = seriesDB.search_movie(query)
                     id = res[0].getID()
                     series = seriesDB.get_movie(id)
@@ -620,11 +640,15 @@ if __name__ == "__main__":
                         synopsis = series['plot outline']
                     casting = series['cast']
                     if seasons != '':
-                        print(f'{name} is a {kind} that has an IMDB rating of {rating} with {seasons} seasons. The series has been ongoing from {length}')
-                        speak(f'{name} is a {kind} that has an IMDB rating of {rating} with {seasons} seasons. The series has been ongoing from {length}')
+                        print(
+                            f'{name} is a {kind} that has an IMDB rating of {rating} and a Rotten Tomato score of {score} with {seasons} seasons. The series has been ongoing from {length}')
+                        speak(
+                            f'{name} is a {kind} that has an IMDB rating of {rating} and a Rotten Tomato score of {score}with {seasons} seasons. The series has been ongoing from {length}')
                     else:
-                        print(f'{name} is a {kind} that has an IMDB rating of {rating}. The series has been ongoing from {length}')
-                        speak(f'{name} is a {kind} that has an IMDB rating of {rating}. The series has been ongoing from {length}')
+                        print(
+                            f'{name} is a {kind} that has an IMDB rating of {rating} and a Rotten Tomato score of {score}. The series has been ongoing from {length}')
+                        speak(
+                            f'{name} is a {kind} that has an IMDB rating of {rating} and a Rotten Tomato score of {score}. The series has been ongoing from {length}')
                     this = ''
                     for i in range(8):
                         this += str(casting[i]) + ', '
