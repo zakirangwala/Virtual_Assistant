@@ -332,11 +332,7 @@ if __name__ == "__main__":
     while True:
         # query = listen().lower()
         query = input("Enter : ")
-        if ('stop' in query and query[query.find('stop') + 4:query.find('stop') + 5] == '') or ('thank you' in query and query[query.find('thank you') + 9:query.find('thank you') + 10] == ''):
-            print('Have a wonderful day!')
-            speak('Have a wonderful day!')
-            break
-        elif 'wikipedia' in query:
+        if 'wikipedia' in query:
             try:
                 print('Searching...')
                 speak('Searching...')
@@ -680,9 +676,6 @@ if __name__ == "__main__":
             except Exception as e:
                 print('An error occurred, please try again')
                 speak('An error occurred, please try again')
-        elif ('hey' in query and query[query.find('hey') + 3:query.find('hey') + 4] == '' or query[query.find('hey') + 3:query.find('hey') + 4] == ' ') or ('hi' in query and query[query.find('hi') + 2:query.find('hi') + 3] == '' or query[query.find('hi') + 2:query.find('hi') + 3] == ' ') or ('hello' in query and query[query.find('hello') + 5:query.find('hello') + 6] == '' or query[query.find('hello') + 5:query.find('hello') + 6] == ' '):
-            print('Hey there')
-            speak('Hey there!')
         elif "my name" in query:
             print('Zaki')
             speak('Zaki')
@@ -698,3 +691,10 @@ if __name__ == "__main__":
                 minutes = int(datetime.datetime.now().minute)
                 print(f"It is {now}:{minutes} pm now")
                 speak(f"It is {now}:{minutes} pm now")
+        elif ('hey' in query and query[query.find('hey') + 3:query.find('hey') + 4] == '' or query[query.find('hey') + 3:query.find('hey') + 4] == ' ') or ('hi' in query and query[query.find('hi') + 2:query.find('hi') + 3] == '' or query[query.find('hi') + 2:query.find('hi') + 3] == ' ') or ('hello' in query and query[query.find('hello') + 5:query.find('hello') + 6] == '' or query[query.find('hello') + 5:query.find('hello') + 6] == ' '):
+            print('Hey there')
+            speak('Hey there!')
+        elif ('stop' in query and query[query.find('stop') + 4:query.find('stop') + 5] == '') or ('thank you' in query and query[query.find('thank you') + 9:query.find('thank you') + 10] == ''):
+            print('Have a wonderful day!')
+            speak('Have a wonderful day!')
+            break
