@@ -772,8 +772,10 @@ if __name__ == "__main__":
                 print('Language entered is not supported')
                 speak('Language is not supported')
             else:
-                print(f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).text}')
-                speak(f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).pronunciation}')
+                print(
+                    f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).text}')
+                speak(
+                    f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).pronunciation}')
         elif 'antonym' in query:
             try:
                 dictionary = PyDictionary()
