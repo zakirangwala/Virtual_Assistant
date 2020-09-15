@@ -736,14 +736,56 @@ if __name__ == "__main__":
                 else:
                     if len(definition[keys[0]]) > 1:
                         for j in range(1):
-                            print(f'{keys[i]} : {definition[keys[0]][j]}')
-                            speak(f'{keys[i]} : {definition[keys[0]][j]}')
+                            print(f'{keys[0]} : {definition[keys[0]][j]}')
+                            speak(f'{keys[0]} : {definition[keys[0]][j]}')
                     else:
                         print(f'{keys[0]} : {definition[keys[0]]}')
                         speak(f'{keys[0]} : {definition[keys[0]]}')
             except Exception as e:
                 print('An error occured while fetching word definition')
                 speak('An error occured while fetching word definition')
+        elif 'synonym' in query:
+            try:
+                dictionary = PyDictionary()
+                query = query.replace(' synonym', '')
+                print(
+                    f'The synonyms for {query} are : {dictionary.synonym(query)}')
+                speak(
+                    f'The synonyms for {query} are : {dictionary.synonym(query)}')
+            except Exception as e:
+                print('Synonyms could not be retrieved')
+                speak('synonyms could not be retrieved')
+        elif 'antonym' in query:
+            try:
+                dictionary = PyDictionary()
+                query = query.replace(' antonym', '')
+                print(
+                    f'The antonyms for {query} are : {dictionary.antonym(query)}')
+                speak(
+                    f'The antonyms for {query} are : {dictionary.antonym(query)}')
+            except Exception as e:
+                print('Antonyms could not be retrieved')
+                speak('antonyms could not be retrieved')
+        elif 'translate':
+            word = query.replace('translate ','')
+            print('What language would you like to translate to?')
+            speak('What language would you like to translate to?')
+            # query = listen().lower()
+            query = input('Language : ')
+            codes = {'Amharic': 'am', 'Arabic': 'ar', 'Basque': 'eu', 'Bengali': 'bn', 'English (UK)': 'en-GB', 'Portuguese (Brazil)': 'pt-BR', 'Bulgarian': 'bg', 'Catalan': 'ca', 'Cherokee': 'chr', 'Croatian': 'hr', 'Czech': 'cs', 'Danish': 'da', 'Dutch': 'nl', 'English (US)': 'en', 'Estonian': 'et', 'Filipino': 'fil', 'Finnish': 'fi', 'French': 'fr', 'German': 'de', 'Greek': 'el', 'Gujarati': 'gu', 'Hebrew': 'iw', 'Hindi': 'hi', 'Hungarian': 'hu', 'Icelandic': 'is', 'Indonesian': 'id', 'Italian': 'it', 'Japanese': 'ja',
+                     'Kannada': 'kn', 'Korean': 'ko', 'Latvian': 'lv', 'Lithuanian': 'lt', 'Malay': 'ms', 'Malayalam': 'ml', 'Marathi': 'mr', 'Norwegian': 'no', 'Polish': 'pl', 'Portuguese (Portugal)': 'pt-PT', 'Romanian': 'ro', 'Russian': 'ru', 'Serbian': 'sr', 'Chinese (PRC)': 'zh-CN', 'Slovak': 'sk', 'Slovenian': 'sl', 'Spanish': 'es', 'Swahili': 'sw', 'Swedish': 'sv', 'Tamil': 'ta', 'Telugu': 'te', 'Thai': 'th', 'Chinese (Taiwan)': 'zh-TW', 'Turkish': 'tr', 'Urdu': 'ur', 'Ukrainian': 'uk', 'Vietnamese': 'vi', 'Welsh': 'cy'}
+            keys = list(codes.keys())
+            values = list(codes.values())
+            location = -1
+            for i in range(len(codes)):
+                if query.lower() == keys[i].lower() or query.lower() == values[i].lower():
+                    location = i
+            if location == -1:
+                print('Language entered is not supported')
+                speak('Language is not supported')
+            else:
+                print(f'{word} translated to {keys[location]} is {PyDictionary(query).translateTo(values[i])}')
+                speak(f'{word} translated to {keys[location]} is {PyDictionary(query).translateTo(values[i])}')
         elif "my name" in query:
             print('Zaki')
             speak('Zaki')
