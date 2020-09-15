@@ -19,6 +19,7 @@ import wolframalpha
 import base64
 import sports
 import imdb
+import googletrans
 
 # Initialize Text to Speech
 engine = pyttsx3.init('sapi5')
@@ -755,6 +756,24 @@ if __name__ == "__main__":
             except Exception as e:
                 print('Synonyms could not be retrieved')
                 speak('synonyms could not be retrieved')
+        elif 'translate' in query:
+            word = query.replace('translate ', '')
+            print('What language would you like to translate to?')
+            speak('What language would you like to translate to?')
+            # query = listen().lower()
+            query = input('Language : ')
+            location = -1
+            keys = list(googletrans.LANGUAGES.keys())
+            values = list(googletrans.LANGUAGES.values())
+            for i in range(len(keys)):
+                if query.lower() == keys[i].lower() or query.lower() == values[i].lower():
+                    location = i
+            if location == -1:
+                print('Language entered is not supported')
+                speak('Language is not supported')
+            else:
+                print(f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).text}')
+                speak(f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).pronunciation}')
         elif 'antonym' in query:
             try:
                 dictionary = PyDictionary()
@@ -766,26 +785,6 @@ if __name__ == "__main__":
             except Exception as e:
                 print('Antonyms could not be retrieved')
                 speak('antonyms could not be retrieved')
-        elif 'translate':
-            word = query.replace('translate ','')
-            print('What language would you like to translate to?')
-            speak('What language would you like to translate to?')
-            # query = listen().lower()
-            query = input('Language : ')
-            codes = {'Amharic': 'am', 'Arabic': 'ar', 'Basque': 'eu', 'Bengali': 'bn', 'English (UK)': 'en-GB', 'Portuguese (Brazil)': 'pt-BR', 'Bulgarian': 'bg', 'Catalan': 'ca', 'Cherokee': 'chr', 'Croatian': 'hr', 'Czech': 'cs', 'Danish': 'da', 'Dutch': 'nl', 'English (US)': 'en', 'Estonian': 'et', 'Filipino': 'fil', 'Finnish': 'fi', 'French': 'fr', 'German': 'de', 'Greek': 'el', 'Gujarati': 'gu', 'Hebrew': 'iw', 'Hindi': 'hi', 'Hungarian': 'hu', 'Icelandic': 'is', 'Indonesian': 'id', 'Italian': 'it', 'Japanese': 'ja',
-                     'Kannada': 'kn', 'Korean': 'ko', 'Latvian': 'lv', 'Lithuanian': 'lt', 'Malay': 'ms', 'Malayalam': 'ml', 'Marathi': 'mr', 'Norwegian': 'no', 'Polish': 'pl', 'Portuguese (Portugal)': 'pt-PT', 'Romanian': 'ro', 'Russian': 'ru', 'Serbian': 'sr', 'Chinese (PRC)': 'zh-CN', 'Slovak': 'sk', 'Slovenian': 'sl', 'Spanish': 'es', 'Swahili': 'sw', 'Swedish': 'sv', 'Tamil': 'ta', 'Telugu': 'te', 'Thai': 'th', 'Chinese (Taiwan)': 'zh-TW', 'Turkish': 'tr', 'Urdu': 'ur', 'Ukrainian': 'uk', 'Vietnamese': 'vi', 'Welsh': 'cy'}
-            keys = list(codes.keys())
-            values = list(codes.values())
-            location = -1
-            for i in range(len(codes)):
-                if query.lower() == keys[i].lower() or query.lower() == values[i].lower():
-                    location = i
-            if location == -1:
-                print('Language entered is not supported')
-                speak('Language is not supported')
-            else:
-                print(f'{word} translated to {keys[location]} is {PyDictionary(query).translateTo(values[i])}')
-                speak(f'{word} translated to {keys[location]} is {PyDictionary(query).translateTo(values[i])}')
         elif "my name" in query:
             print('Zaki')
             speak('Zaki')
