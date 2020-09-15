@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from googlesearch import search
 from json.decoder import JSONDecodeError
 from urllib.parse import urlencode
+from PyDictionary import PyDictionary
 import pyttsx3
 import datetime
 import speech_recognition as sr
@@ -327,7 +328,7 @@ def send_mail(subject, body, reciever):
 
 
 def rotten_tomatoes_score(query):
-    try :
+    try:
         query += query + " Rotten Tomatoes"
         URL = google_query(query)[0]
         page = requests.get(URL, headers=headers)
@@ -340,6 +341,19 @@ def rotten_tomatoes_score(query):
     except Exception as e:
         print('Could not retrieve tomatometer score')
         speak('Could not retrieve tomatometer score')
+
+# Fetch Definition
+
+
+def fetch_definition(word):
+    try:
+        dict = PyDictionary()
+        meaning = dict.meaning(word)
+        return meaning
+    except Exception as e:
+        print('Word may not be present in the english dictionary')
+        speak('Word may not be present in the english dictionary')
+
 
 # Main Method
 if __name__ == "__main__":
@@ -552,7 +566,8 @@ if __name__ == "__main__":
                                 out += (str(directors[i]))
                     else:
                         out = (f'Directed by : {str(directors[0])}')
-                    print(f'{title} ({year})\nIMDB - {rating}\nRotten Tomato - {score}')
+                    print(
+                        f'{title} ({year})\nIMDB - {rating}\nRotten Tomato - {score}')
                     print(out)
                     print(f'Cast includes : {this}')
                     speak(
@@ -700,6 +715,35 @@ if __name__ == "__main__":
             except Exception as e:
                 print('An error occurred, please try again')
                 speak('An error occurred, please try again')
+        elif 'define' in query:
+            try:
+                query = query.replace('define ', '')
+                definition = fetch_definition(query)
+                print('Fetching...')
+                speak('Fetching')
+                keys = list(definition.keys())
+                if len(keys) > 1:
+                    print(f'There are {len(keys)} definitions')
+                    speak(f'There are {len(keys)} definitions')
+                    for i in range(len(keys)):
+                        if len(definition[keys[i]]) > 1:
+                            for j in range(1):
+                                print(f'{keys[i]} : {definition[keys[i]][j]}')
+                                speak(f'{keys[i]} : {definition[keys[i]][j]}')
+                        else:
+                            print(f'{keys[i]} : {definition[keys[i]]}')
+                            speak(f'{keys[i]} : {definition[keys[i]]}')
+                else:
+                    if len(definition[keys[0]]) > 1:
+                        for j in range(1):
+                            print(f'{keys[i]} : {definition[keys[0]][j]}')
+                            speak(f'{keys[i]} : {definition[keys[0]][j]}')
+                    else:
+                        print(f'{keys[0]} : {definition[keys[0]]}')
+                        speak(f'{keys[0]} : {definition[keys[0]]}')
+            except Exception as e:
+                print('An error occured while fetching word definition')
+                speak('An error occured while fetching word definition')
         elif "my name" in query:
             print('Zaki')
             speak('Zaki')
