@@ -1,7 +1,0 @@
-git clone https://github.com/ZakiRangwala/Virtual_Assistant.git
-make config.py file
-py -m venv env
-pip install -r requirements.txt
-pip install pipwin
-pipwin install pyaudio
-Run and Enjoy!!
