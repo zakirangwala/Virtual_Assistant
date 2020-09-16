@@ -11,9 +11,11 @@ Features include :
   And many more features to come!!
 
 # Installation Process :
-- clone this repo (git clone https://github.com/ZakiRangwala/Virtual_Assistant.git)
-- make empty config.py file in directory (type > null config.py)
-- Recomended to make virtual environment (py -m venv env)
-- Install .whl file for PyAudio module depending on your python version and bit installed either 64 bit or 32 bit   (Check via entering 'py' or 'python' in terminal) Install here : https://www.lfd.uci.edu/~gohlke/pythonlibs/
-- Install dependencies and modules (pip install -r requirements.txt)
+- clone this repo ($ 'git clone https://github.com/ZakiRangwala/Virtual_Assistant.git')
+- Naviagte to Virtual Assistant directory (% 'cd WILL VARY ON FILE PATH')
+- make empty config.py file in directory ($ 'type nul > config.py')
+- Recomended to make virtual environment ($ 'py -m venv env')
+- Acitvate Virtual Enviroment ($ 'env\Scripts\activate.bat')
+- Install .whl file for PyAudio module depending on your python version and bit installed either 64 bit or 32 bit   (Check via entering 'py' or 'python' in terminal) Install here : https://www.lfd.uci.edu/~gohlke/pythonlibs/ (Navigate to where whl file is downloaded via '$ cd ..' and install via '$ pip install FILENAME OF .WHL file'
+- Install other required dependencies and modules (pip install -r requirements.txt)
 - And you are good to go, enjoy the program!
