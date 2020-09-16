@@ -11,8 +11,8 @@ Features include :
   And many more features to come!!
 
 # Installation Process :
-- clone this repo ($ 'git clone https://github.com/ZakiRangwala/Virtual_Assistant.git')
-- Naviagte to Virtual Assistant directory (% 'cd WILL VARY ON FILE PATH')
+- Clone this repo ($ 'git clone https://github.com/ZakiRangwala/Virtual_Assistant.git')
+- Naviagte to Virtual Assistant directory (% 'cd Virtual_Assistant')
 - make empty config.py file in directory ($ 'type nul > config.py')
 - Recomended to make virtual environment ($ 'py -m venv env')
 - Acitvate Virtual Enviroment ($ 'env\Scripts\activate.bat')
