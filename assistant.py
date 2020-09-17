@@ -794,7 +794,7 @@ if __name__ == "__main__":
                 print(
                     f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).text}')
                 speak(
-                    f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).pronunciation}')
+                    f'{word} translated to {values[location]} is {googletrans.Translator().translate(word,dest=keys[location]).text}')
         elif 'antonym' in query:
             try:
                 dictionary = PyDictionary()
