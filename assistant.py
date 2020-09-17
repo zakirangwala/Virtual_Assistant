@@ -355,6 +355,23 @@ def fetch_definition(word):
         print('Word may not be present in the english dictionary')
         speak('Word may not be present in the english dictionary')
 
+# Find IMDB
+
+
+def find_imdb(query):
+    try:
+        query += ' IMDB'
+        URL = google_query(query)[0]
+        page = requests.get(URL, headers=headers)
+        html_content = page.text
+        soup = BeautifulSoup(html_content, 'lxml')
+        title = soup.title.string
+        title = title[0:-7]
+        return title
+    except Exception as e:
+        print('Movie could not be found')
+        speak('Movie could not be found')
+
 
 # Main Method
 if __name__ == "__main__":
@@ -537,17 +554,17 @@ if __name__ == "__main__":
             query = query.replace('search ', '')
             if 'movie' in query or 'documentary' in query:
                 try:
-                    check = query.find(' movie')
-                    if check == -1:
-                        query = query.replace(' documentary', '')
-                    else:
-                        query = query.replace(' movie', '')
+                    # check = query.find(' movie')
+                    # if check == -1:
+                    #     query = query.replace(' documentary', '')
+                    # else:
+                    #     query = query.replace(' movie', '')
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     moviesDB = imdb.IMDb()
-                    movies = moviesDB.search_movie(query)
-                    score = rotten_tomatoes_score(query)
+                    movies = moviesDB.search_movie(find_imdb(query))
                     id = movies[0].getID()
+                    score = rotten_tomatoes_score(find_imdb(query))
                     movie = moviesDB.get_movie(id)
                     title = movie['title']
                     year = movie['year']
@@ -627,17 +644,19 @@ if __name__ == "__main__":
                     speak('Could not retrive requested information')
             elif 'series' in query or 'tv' in query:
                 try:
-                    check = query.find(' series')
-                    if check == -1:
-                        query = query.replace(' tv', '')
-                    else:
-                        query = query.replace(' series', '')
+                    # check = query.find(' series')
+                    # if check == -1:
+                    #     query = query.replace(' tv', '')
+                    # else:
+                    #     query = query.replace(' series', '')
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     seriesDB = imdb.IMDb()
-                    score = rotten_tomatoes_score(query)
+                    query = find_imdb(query)
+                    query = query[0:query.find('(TV Series')]
                     res = seriesDB.search_movie(query)
                     id = res[0].getID()
+                    score = rotten_tomatoes_score(query)
                     series = seriesDB.get_movie(id)
                     # seriesDB.update(series, 'episodes')
                     name = series['smart canonical title']
