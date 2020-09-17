@@ -16,7 +16,7 @@ Features include :
 - make empty config.py file in directory ($ 'type nul > config.py')
 - Recomended to make virtual environment ($ 'py -m venv env')
 - Acitvate Virtual Enviroment ($ 'env\Scripts\activate.bat')
-- Install .whl file for PyAudio module depending on your python version and bit installed either 64 bit or 32 bit   (Check via entering 'py' or 'python' in terminal) Install here : https://www.lfd.uci.edu/~gohlke/pythonlibs/ (Navigate to where whl file is downloaded via '$ cd ..' and install via '$ pip install FILENAME OF .WHL file'
+- Install .whl file for PyAudio module depending on your python version and bit installed either 64 bit or 32 bit   (Check via entering 'py' or 'python' in terminal) Install here : https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio (Navigate to where whl file is downloaded via '$ cd ..' and install via '$ pip install FILENAME OF .WHL file'
 - Return back to Virtual Assistant directory via '$ cd DEPENDS OF FILE PATH OF REPO' 
 - Install other required dependencies and modules (pip install -r requirements.txt)
 - And you are good to go, enjoy the program!
