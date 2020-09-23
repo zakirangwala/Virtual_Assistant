@@ -38,13 +38,13 @@ def speak(audio):
 
 def greet():
     hour = int(datetime.datetime.now().hour)
-    if hour >= 0 and hour <= 12:
+    if hour >= 0 and hour < 12:
         speak("Good Morning!")
         print("Good Morning!")
-    elif hour > 12 and hour < 16:
+    elif hour >= 12 and hour < 16:
         speak("Good Afternoon!")
         print("Good Afternoon!")
-    elif hour > 16 and hour < 20:
+    elif hour >= 16 and hour < 20:
         speak("Good Evening!")
         print("Good Evening!")
     else:
@@ -59,11 +59,9 @@ def greet():
 def listen():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        playsound('sound.mp3')
+        speak("I'm Listening")
         print("Listening...")
-        #speak("I'm Listening")
         r.pause_threshold = 1
-        # audio = r.listen(source, timeout=1, phrase_time_limit=5)
         r.adjust_for_ambient_noise(source, duration=1)
         audio = r.listen(source)
     try:
@@ -375,12 +373,11 @@ def find_imdb(query):
 
 # Main Method
 if __name__ == "__main__":
-    # greet()
+    greet()
     city, country, latitude, longitude = get_location()
-    # print(f"{city}, {country} : {latitude},{longitude}")
+    print(f"{city}, {country} : {latitude},{longitude}")
     while True:
-        # query = listen().lower()
-        query = input("Enter : ")
+        query = listen().lower()
         if 'wikipedia' in query:
             try:
                 print('Searching...')
@@ -435,7 +432,6 @@ if __name__ == "__main__":
                         print("Song could not be found")
                         speak("Song could not be found")
                     else:
-                        # print(data)
                         for i in range(len(data['tracks']['items'][0]['artists'])):
                             artists.append(data['tracks']['items']
                                            [0]['artists'][i]['name'])
@@ -524,22 +520,18 @@ if __name__ == "__main__":
             try:
                 print('Who do you want to send the email to?')
                 speak('Who do you want to send the email to?')
-                # reciever = listen()
-                reciever = input()
+                reciever = listen()
                 print('What is the subject?')
                 speak('What is the subject?')
-                # subject = listen()
-                subject = input()
+                subject = listen()
                 print('What is the message?')
                 speak('What is the message?')
-                # message = listen()
-                message = input()
+                message = listen()
                 print(
                     f'Send to : {reciever}\nSubject : {subject}\nMessage : {message}\nAre you sure you want to send the message?')
                 speak(
                     f'Email is being sent to {reciever}. The subject is {subject}. The message says {message}. Are you sure you want to send the message?')
-                # query = listen().lower()
-                query = input()
+                query = listen().lower()
                 if 'yes' in query:
                     send_mail(subject, message, reciever)
                     print('Email successfully sent!')
@@ -554,11 +546,11 @@ if __name__ == "__main__":
             query = query.replace('search ', '')
             if 'movie' in query or 'documentary' in query:
                 try:
-                    # check = query.find(' movie')
-                    # if check == -1:
-                    #     query = query.replace(' documentary', '')
-                    # else:
-                    #     query = query.replace(' movie', '')
+                    check = query.find(' movie')
+                    if check == -1:
+                        query = query.replace(' documentary', '')
+                    else:
+                        query = query.replace(' movie', '')
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     moviesDB = imdb.IMDb()
@@ -592,8 +584,7 @@ if __name__ == "__main__":
                         f'{title} is a {year} movie with an IMDB rating of {rating} and a Rotten Tomato score of {score} {out}. Notable cast members include {this}')
                     print('Would you like to hear the synopsis?')
                     speak('Would you like to hear the synopsis?')
-                    #query = listen().lower()
-                    query = input()
+                    query = listen().lower()
                     keys = list(movie.keys())
                     if 'yes' in query:
                         if 'plot outline' not in keys:
@@ -644,11 +635,11 @@ if __name__ == "__main__":
                     speak('Could not retrive requested information')
             elif 'series' in query or 'tv' in query:
                 try:
-                    # check = query.find(' series')
-                    # if check == -1:
-                    #     query = query.replace(' tv', '')
-                    # else:
-                    #     query = query.replace(' series', '')
+                    check = query.find(' series')
+                    if check == -1:
+                        query = query.replace(' tv', '')
+                    else:
+                        query = query.replace(' series', '')
                     print(f'Searching for {query}...')
                     speak(f'Searching database for {query}')
                     seriesDB = imdb.IMDb()
@@ -658,7 +649,6 @@ if __name__ == "__main__":
                     id = res[0].getID()
                     score = rotten_tomatoes_score(query)
                     series = seriesDB.get_movie(id)
-                    # seriesDB.update(series, 'episodes')
                     name = series['smart canonical title']
                     kind = series['kind']
                     length = series['series years']
@@ -667,7 +657,6 @@ if __name__ == "__main__":
                         seasons = series['seasons']
                     else:
                         seasons = ''
-                    # eps = series['number of episodes']
                     rating = series['rating']
                     if 'plot outline' not in keys:
                         synopsis = series['plot'][0]
@@ -691,8 +680,7 @@ if __name__ == "__main__":
                     speak(f'Cast includes : {this}')
                     print('Would you like to hear the synopsis?')
                     speak('Would you like to hear the synopsis?')
-                    #query = listen().lower()
-                    query = input()
+                    query = listen().lower()
                     if 'yes' in query:
                         print(f'{synopsis}')
                         speak(synopsis)
@@ -779,8 +767,7 @@ if __name__ == "__main__":
             word = query.replace('translate ', '')
             print('What language would you like to translate to?')
             speak('What language would you like to translate to?')
-            # query = listen().lower()
-            query = input('Language : ')
+            query = listen().lower()
             location = -1
             keys = list(googletrans.LANGUAGES.keys())
             values = list(googletrans.LANGUAGES.values())
