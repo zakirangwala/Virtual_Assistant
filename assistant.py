@@ -33,7 +33,7 @@ def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
-# Greeing Function
+# Greeting Function
 
 
 def greet():
@@ -50,8 +50,8 @@ def greet():
     else:
         speak("Good Night!")
         print("Good Night!")
-    print("Hi, I am your virtual assistant. Please tell me how to help you")
-    speak("Hi, I am your virtual assistant. Please tell me how to help you")
+    print("Hi, I am your virtual assistant. How can I help?")
+    speak("Hi, I am your virtual assistant. How can I help?")
 
 # Listen to user input
 
