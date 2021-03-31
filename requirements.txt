@@ -23,7 +23,7 @@ IMDbPY==6.8
 inflect==4.1.0
 jaraco.itertools==5.0.0
 Js2Py==0.70
-lxml==4.5.2
+lxml==4.6.3
 more-itertools==8.5.0
 numpy==1.19.1
 packaging==20.4
